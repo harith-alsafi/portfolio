@@ -77,7 +77,7 @@ export default function GithubProjects() {
   
   // Hardcoded GitHub credentials - Replace with your actual values
   const GITHUB_USERNAME = "harith-alsafi" // Replace with your GitHub username
-  const GITHUB_TOKEN = process.env.GITHUB_TOKEN // Replace with your GitHub personal access token
+  const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN // Replace with your GitHub personal access token
 
   useEffect(() => {
     fetchGitHubProjects()
