@@ -74,7 +74,7 @@ export default function GithubProjects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
+   
   // Hardcoded GitHub credentials - Replace with your actual values
   const GITHUB_USERNAME = "harith-alsafi" // Replace with your GitHub username
   const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN // Replace with your GitHub personal access token
