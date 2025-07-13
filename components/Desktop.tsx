@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 import {
   FaUser,
   FaBriefcase,
@@ -21,9 +22,9 @@ import Education from "./windows/Education"
 import Publications from "./windows/Publications"
 import Certificates from "./windows/Certificates"
 import GithubProjects from "./windows/GithubProjects"
-import Projects from "@/components/windows/Projects"
 import Awards from "@/components/windows/Awards"
 import Volunteering from "./windows/Volunteering"
+import Projects from "@/components/windows/Projects"
 
 const desktopIcons: DesktopIcon[] = [
   {
@@ -107,6 +108,7 @@ export default function Desktop() {
   const { openWindow } = useWindows()
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -116,6 +118,13 @@ export default function Desktop() {
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  // Preload the image
+  useEffect(() => {
+    const img = new window.Image()
+    img.src = '/background.jpg'
+    img.onload = () => setImageLoaded(true)
   }, [])
 
   const handleIconClick = (icon: DesktopIcon) => {
@@ -148,16 +157,27 @@ export default function Desktop() {
   return (
     <div
       className="relative w-full h-full overflow-hidden"
-      style={{
-        backgroundImage: `url('/background.jpg?height=1080&width=1920')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
       onClick={() => setSelectedIcon(null)}
     >
+      {/* Fallback gradient background that shows immediately */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600" />
+      
+      {/* Optimized background image using Next.js Image component */}
+      <Image
+        src="/background.jpg"
+        alt="Desktop background"
+        fill
+        className={`object-cover transition-opacity duration-500 ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        priority
+        quality={85}
+        sizes="100vw"
+        onLoad={() => setImageLoaded(true)}
+      />
+
       {/* Overlay for better icon visibility */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 via-blue-500/20 to-blue-600/30"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 via-blue-500/20 to-blue-600/30 z-10"></div>
 
       {desktopIcons.map((icon, index) => {
         const IconComponent = icon.icon
@@ -166,7 +186,7 @@ export default function Desktop() {
         return (
           <motion.div
             key={icon.id}
-            className="absolute cursor-pointer select-none group z-10"
+            className="absolute cursor-pointer select-none group z-20"
             style={{
               left: `${position.x}px`,
               top: `${position.y}px`,
